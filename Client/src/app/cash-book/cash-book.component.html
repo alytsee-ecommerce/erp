@@ -1,0 +1,95 @@
+ <h1 style="margin-top: 10px;  text-align:center;"> OFFICE CASH BOOK</h1>
+   <!-- Button trigger modal -->
+   <h4 style="margin-left:40px">Balance:<mark>{{this.balance}}</mark></h4>
+   <button  style="margin-left:90%;" (click)="open(add);subbtn();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>  <table >
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th >Date</th>
+        <th > Particulars</th>
+        <th >Debit</th>
+        <th > Credit</th>
+        <th >Bill No</th>
+        <th>Options</th>
+      </tr>
+      <tr [ngClass]="{
+        'paid' : element.crIncome !=0
+       
+     }" *ngFor="let element of cashData let i=index;" >
+          <td>{{(i+1)}}</td>
+          <td >{{element.date| date : 'dd-MM-yyyy'}}</td>
+          <td >{{element.Particulars}}</td>
+          <td >{{element.drExpense}}</td>
+          <td  >{{element.crIncome}}</td>
+          <td>{{element.Bill}}</td>
+          <td style="max-width:30px">  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editCash(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button>
+            <button  mat-icon-button   (click)="deleteCash(element._id)">
+              <mat-icon>delete</mat-icon></button></td>
+      </tr>
+    </thead>
+  </table>
+  
+
+  <ng-template #add let-modal>
+    <form class="form-horizontal" [formGroup]="cashForm" novalidate>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Details</h4>
+      <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" > Date *</label>
+            <input class="form-control" type="date"  placeholder="Date"formControlName="date" [ngClass]="{ 'is-invalid': cashFormSubmitted && n.date.errors}">
+            <div *ngIf="cashFormSubmitted && n.date.errors" class="invalid-feedback">
+             <div *ngIf="n.date.errors.required">date is required</div>
+           </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" > Particulars *</label>
+            <input class="form-control" type="text" name="Particulars" placeholder="Particulars"formControlName="Particulars" [ngClass]="{ 'is-invalid': cashFormSubmitted && n.Particulars.errors}">
+            <div *ngIf="cashFormSubmitted && n.Particulars.errors" class="invalid-feedback">
+             <div *ngIf="n.Particulars.errors.required">Particulars is required</div>
+           </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >Dr Expense *</label>
+            <input class="form-control" type="text"  name="drExpense"placeholder="drExpense"formControlName="drExpense" [ngClass]="{ 'is-invalid': cashFormSubmitted && n.drExpense.errors}">
+            <div *ngIf="cashFormSubmitted && n.drExpense.errors" class="invalid-feedback">
+             <div *ngIf="n.drExpense.errors.required">drExpense is required</div>
+           </div>
+          </div>
+           </div>
+          <div class="form-group row">
+            <div class="col-md-4">
+              <label class="col-form-label" >Cr Income *</label>
+              <input    type="text"  class="form-control" name="crIncome" placeholder="crIncome"formControlName="crIncome" [ngClass]="{ 'is-invalid': cashFormSubmitted && n.crIncome.errors}">
+              <div *ngIf="cashFormSubmitted && n.crIncome.errors" class="invalid-feedback">
+               <div *ngIf="n.crIncome.errors.required">crIncome is required</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="col-form-label" >  Bill no*</label>
+              <input class="form-control" type="string"   name="Bill"placeholder="Bill No"formControlName="Bill" [ngClass]="{ 'is-invalid': cashFormSubmitted && n.Bill.errors}">
+              <div *ngIf="cashFormSubmitted && n.Bill.errors" class="invalid-feedback">
+               <div *ngIf="n.Bill.errors.required">Bill No is required</div>
+              </div>
+                </div>
+          <div class="modal-footer">
+            <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+            <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmitcashForm(modal);" >Submit</button>
+            <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateCash(modal);" >Update</button>
+          </div>
+          </div>
+        </div>
+        </form>
+        </ng-template>
+    
+
+  <dialog  class=" delete"id="delete">
+  <h4> Delete The Selected Data?</h4>
+  <button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+  <button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+

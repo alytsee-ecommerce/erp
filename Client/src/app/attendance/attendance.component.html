@@ -1,0 +1,206 @@
+<div  *ngIf="usedat.permission =='user' || usedat.permission ==null " style="text-align:center; margin-bottom: 0px; margin-top: 10%;" >
+  <h1  style="color: red;"> ACCESS DENIED </h1>
+</div>
+<div *ngIf="usedat.permission =='superadmin'|| usedat.permission =='admin'">
+
+  <mat-tab-group   >
+    <mat-tab  label=" Attendance Sheet">
+<label  style="margin-left:140px;margin-top: 20px;" >Select Date</label>
+<div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+ 
+  <input class="form-control" type="date" style="max-width:20% ;margin-left: 140px;"   name="date"placeholder="Date"
+  [ngModel]="dat | date:'yyyy-MM-dd'" (ngModelChange)="dat = $event"  (change)="date()" >
+ 
+
+
+  <button  class="btn btn-sm btn-primary "  
+  (click)="open(add);show=false" mat-raised-button color="primary" *ngIf="display && adminAttendance "><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>
+  <h5  style="color:green; margin-left:40%;margin-right: 3%;" *ngIf="!display">Attendance Added </h5> 
+<!-- Button trigger modal -->
+</div>
+    
+<table >
+  <thead>
+   <tr>
+    <th>Sl No</th>
+     <th> Employee ID</th>
+     <th >Employee Name </th>
+     <th>Attendance</th>
+     <th *ngIf="usedat.permission =='superadmin' || usedat.permission =='admin'">Edit</th>
+   </tr>
+   <tr  *ngFor="let element of searchData  let i=index "
+   [ngClass]="{
+    'positive' : element.value =='true',
+    'negative' :  element.value =='false'
+ }" >
+    <td>{{i+1}}</td>
+       <td>{{element.employeeId}}</td>
+       <td>{{element.firstName }}</td>
+       <td *ngIf="element.value=='true'">Present</td>
+       <td *ngIf="element.value=='false'">Absent</td>
+       <td *ngIf="usedat.permission =='superadmin' || usedat.permission =='admin'"><button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(update);editAttendance(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button></td>
+
+  </tr>
+ </thead>
+</table>
+
+<ng-template #add let-modal>
+ 
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Details</h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <table >
+      <thead>
+       <tr>
+        <th>Sl No</th>
+         <th> Employee ID</th>
+         <th >Employee Name </th>
+         <th>Attendance</th>
+       </tr>
+      
+       <tr  *ngFor="let element of userData  let i=index "  > 
+        <td>{{i+1}}</td>
+           <td>{{element.employeeId}}</td>
+           <td>{{element.firstName }}</td>
+           <td>
+         
+            <mat-radio-group   aria-label="Select an option " >
+              <mat-radio-button  color="primary"   value="true" (change)="val(i,'true')"style="padding: 10px;" > Present</mat-radio-button>
+              <mat-radio-button   value="false" (change)="val(i,'false')" style="padding: 10px;" > Absent</mat-radio-button>
+            </mat-radio-group>
+         </td>
+       
+      </tr>
+     </thead>
+    </table>
+
+
+      </div>    
+      
+      <button  mat-raised-button  *ngIf="show" type="submit" color="primary" style="margin-left:75%;max-width: 20%;margin-bottom:10px;" (click)="senddata();modal.dismiss('Cross click')">submit</button>    
+
+      </ng-template>
+      
+    <ng-template #update let-modal>
+ 
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Details</h4>
+        <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+  </div>
+   
+  <table >
+    <thead>
+     <tr>
+       <th> Employee ID</th>
+       <th >Employee Name </th>
+       <th *ngIf="usedat.permission =='superadmin'"> Attendance</th>
+       <th>Hour</th>
+
+
+     </tr>
+     <tr  >
+
+         <td>{{updata.employeeId}}</td>
+         <td>{{updata.firstName }}</td>
+         <td *ngIf="usedat.permission =='superadmin'"> <mat-radio-group aria-label="Select an option " >
+          <mat-radio-button  [value]="true" color="primary" [checked]="updata.value=='true'" (change)="change('true')" style="padding: 10px;"  > Present</mat-radio-button>
+          <mat-radio-button   [value]="false" [checked]="updata.value=='false'" (change)="change('false')" style="padding: 10px;"> Absent</mat-radio-button>
+        </mat-radio-group></td>
+        <td *ngIf="usedat.permission !='user'   && updata.value=='true' "> <input class="form-control" [(ngModel)]="hour"   type="number" ></td>
+  <!--     <td *ngIf="usedat.permission =='superadmin' || usedat.permission =='admin'  && updata.value=='false' " disabled > <input class="form-control"  type="number" ></td>--> 
+
+   
+  
+    </tr>
+   </thead>
+  </table>
+  <button  mat-raised-button  color="primary" style="margin-left:75%;max-width: 20%;margin-bottom:10px;" (click)="updateAttendance(update);modal.dismiss('Cross click')">submit</button>  
+  </ng-template>
+</mat-tab>
+
+
+
+<!------------  Attendance/Salary -->
+
+<mat-tab label="Attendance/Salary">
+  <div *ngIf="spin" class="spin">
+    <mat-spinner style="margin-top: 10%; margin-left:50%"></mat-spinner>
+  </div>
+
+        <div class="input-group searchkey col-md-7"  style="margin-top:20px">
+          <select class="form-control"  [(ngModel)]="emp" style="max-width:15% ;margin-left: 10%;" (change)="sort()">
+            <option value="" [disabled]="true" > Select Employee</option>
+            <option *ngFor=" let element of userData">{{element.firstName}}</option>
+          </select>
+      <input placeholder="From Date" style=" max-width:10% " onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+      <input placeholder="To Date" style=" max-width:10%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+      <button type="submit"   mat-raised-button color="primary" (click)="sort1=prsnt;emp=''">
+        X
+    </button>
+      <button type="submit"  mat-raised-button color="primary"  (click)="search(srt,end);">
+        <mat-icon>search</mat-icon>
+      </button>
+     <!--<h5 style="margin-left:10px"> Total No Of Working Days <mark>{{tot}}</mark></h5> --> 
+    
+    </div>
+     
+    <table >
+      <thead>
+       <tr>
+        <th>Sl No</th>
+         <th> Employee ID</th>
+         <th >Employee Name </th>
+         <th> No Of Days Present</th>
+         <th>Total Hours</th>
+         <th  [hidden] ="usedat.permission !=='superadmin'">amount per day</th>
+         <th>salary advance</th>
+         <th  [hidden] ="usedat.permission !=='superadmin'">Salary</th>
+
+       </tr>
+      </thead>
+      <tbody>
+       <tr  *ngFor="let element of sort1  let i=index ">
+        <td>{{i+1}}</td>
+           <td>{{element.employeeId}}</td>
+           <td>{{element.firstName }}</td>
+           <td> {{element.value}}</td>
+           <td>{{element.hour}}</td>
+           <td [hidden] ="usedat.permission !=='superadmin'">{{element.perdaysalary}}</td>
+           <td >{{element.salaryAdvan}}</td>
+           <td [hidden] ="usedat.permission !=='superadmin'">{{element.salary}}</td>
+        
+    
+      </tr>
+    </tbody>
+     <tfoot>
+      <tr>
+     <td  [hidden]=" usedat.permission !='superadmin' "  style="text-align:center">Permanent:</td>
+     <td  [hidden]=" usedat.permission !='superadmin' "><mark>{{permanent |number}}</mark></td>
+     <td  [hidden]=" usedat.permission !='superadmin' "  style="text-align:center">Weekly:</td>
+     <td  [hidden]=" usedat.permission !='superadmin' "><mark>{{weekly |number}}</mark></td>
+     <td  [hidden]=" usedat.permission !='superadmin' "  style="text-align:center">Temp:</td>
+     <td  [hidden]=" usedat.permission !='superadmin' "><mark>{{temp |number}}</mark></td>
+     <td  [hidden]=" usedat.permission !='superadmin' "  style="text-align:center">Totall:</td>
+        <td  [hidden]=" usedat.permission !='superadmin' "><mark>{{totalsalary |number}}</mark></td>
+      </tr>
+  </tfoot>
+ 
+
+    </table>
+
+    
+</mat-tab>
+</mat-tab-group>
+
+    </div>

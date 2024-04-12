@@ -1,0 +1,157 @@
+
+<div  *ngIf="usedat.permission !='superadmin' " style="text-align:center; margin-bottom: 0px; margin-top: 10%;" >
+  <h1  style="color: red;"> ACCESS DENIED </h1>
+</div>
+<div *ngIf="usedat.permission =='superadmin'">
+  <h1 style="  text-align:center;">EMPLOYEE DETAILS</h1>
+  <button  style="margin-left:90%"  (click)="open(add);subbtn();this.userForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button> <table >
+  <thead>
+    <tr>
+      <th>S.No</th>
+      <th >Employee ID</th>
+      <th >First Name</th>
+      <th >Last Name</th>
+      <th>Permission</th>
+      <th>User Name</th>
+      <th > Email</th>
+      <th>Password</th>
+      <th >Hire Date</th>
+      <th>Employment</th>
+      <th>Salary</th>
+      <th >options</th>
+    </tr>
+    <tr *ngFor="let element of userData;let i=index;" >
+        <td>{{(i+1)}}</td>
+        <td >{{element.employeeId}}</td>
+        <td >{{element.firstName}}</td>
+        <td >{{element.lastName}}</td>
+        <td >{{element.permission}}</td>
+        <td>{{element.userName}}</td>
+        <td >{{element.email}}</td>
+        <td *ngIf="element.password!=null">****</td>
+        <td *ngIf="element.password ==null"> </td>
+        <td>{{element.hireDate}}</td>
+        <td>{{element.employment}}</td>
+        <td>{{element.salary}}</td>
+        <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editUserData(element.userName);updatebtn()"> <mat-icon>edit</mat-icon></button>
+            <button  mat-icon-button   (click)="deleteUserData(element.userName)">
+              <mat-icon>delete</mat-icon></button></td>
+      </tr>
+  </thead>
+</table>
+
+
+<ng-template #add  id="mod"let-modal>
+  <form class="form-horizontal" [formGroup]="userForm" novalidate>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Details</h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group row">
+        <div class="col-md-4">
+          <label class="col-form-label" >Employee Id </label>
+          <input class="form-control" style="  min-width: 40px;" type="text" name="employeeId" placeholder="Employee ID" 
+           formControlName="employeeId" [ngClass]="{ 'is-invalid': userFormSubmitted && n.employeeId.errors}">
+           <div *ngIf="userFormSubmitted && n.employeeId.errors" class="invalid-feedback">
+            <div *ngIf="n.employeeId.errors.required">employeeId is required</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="col-form-label" >First Name  *</label>
+          <input class="form-control" type="text" name="firstName" placeholder="First Name"
+          formControlName="firstName" [ngClass]="{ 'is-invalid': userFormSubmitted && n.firstName.errors}" >
+          <div *ngIf="userFormSubmitted && n.firstName.errors" class="invalid-feedback">
+            <div *ngIf="n.firstName.errors.required">firstName is required</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="col-form-label" >Last Name </label>
+          <input class="form-control" type="text"  name="lastName"  placeholder="Last Name"  formControlName="lastName"[ngClass]="{ 'is-invalid': userFormSubmitted && n.lastName.errors}" >
+          <div *ngIf="userFormSubmitted && n.lastName.errors" class="invalid-feedback">
+            <div *ngIf="n.lastName.errors.required">lastName is required</div>
+          </div>
+        </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" > Permission</label>
+            <select   class="form-select" aria-label="Default select example"   formControlName="permission" 
+            [ngClass]="{ 'is-invalid': userFormSubmitted && n.permission.errors}" >
+              <option>select an option</option>
+              <option value="superadmin"> Super Admin</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <div *ngIf="userFormSubmitted && n.permission.errors" class="invalid-feedback">
+              <div *ngIf="n.permission.errors.required">permission is required</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >User Name *</label>
+          <input    class="form-control"  type="text"  name="userName"   formControlName="userName" placeholder="userName"[ngClass]="{ 'is-invalid': userFormSubmitted && n.userName.errors}" >
+          <div *ngIf="userFormSubmitted && n.userName.errors" class="invalid-feedback">
+            <div *ngIf="n.userName.errors.required">User Name is required</div>
+          </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >Email </label>
+          <input    class="form-control"  type="email"  name="email"   formControlName="email" placeholder="Email"[ngClass]="{ 'is-invalid': userFormSubmitted && n.email.errors}" >
+          <div *ngIf="userFormSubmitted && n.email.errors" class="invalid-feedback">
+            <div *ngIf="n.email.errors.required">email is required</div>
+          </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >Password </label>
+          <input    class="form-control"  type="password"  name="password"   formControlName="password" placeholder="password"[ngClass]="{ 'is-invalid': userFormSubmitted && n.password.errors}" >
+          <div *ngIf="userFormSubmitted && n.password.errors" class="invalid-feedback">
+            <div *ngIf="n.password.errors.required">password is required</div>
+          </div>
+          
+
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" > Hire Date </label>
+          <input class="form-control" type="date"   name="hireDate"   formControlName="hireDate" placeholder="Hire Date"[ngClass]="{ 'is-invalid': userFormSubmitted && n.hireDate.errors}" >
+          <div *ngIf="userFormSubmitted && n.hireDate.errors" class="invalid-feedback">
+            <div *ngIf="n.hireDate.errors.required">hireDate is required</div>
+        
+          </div>
+          </div>
+          <div class="col-md-4"  >
+            <label class="col-form-label" > Salary *</label>
+          <input class="form-control" type="number"   name="salary"   formControlName="salary" placeholder="salary"[ngClass]="{ 'is-invalid': userFormSubmitted && n.salary.errors}" >
+          <div *ngIf="userFormSubmitted && n.salary.errors" class="invalid-feedback">
+            <div *ngIf="n.salary.errors.required">salary is required</div>      
+          </div> 
+          </div>
+          <div class="col-md-4"  >
+            <label class="col-form-label" > Employment *</label>
+          <input class="form-control" type="string"   name="employment"   formControlName="employment" placeholder="employment"[ngClass]="{ 'is-invalid': userFormSubmitted && n.employment.errors}" >
+          <div *ngIf="userFormSubmitted && n.employment.errors" class="invalid-feedback">
+            <div *ngIf="n.employment.errors.required">Employment is required</div>      
+          </div> 
+          </div>   
+          </div>
+        <div class="modal-footer">
+          <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+          <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmituserForm(modal)" >Submit</button>
+          <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateEmployee(modal)" >Update</button>
+        </div>
+        </div>
+        </form>
+      </ng-template>
+
+
+
+    </div>
+
+
+
+
+<dialog  class=" delete"id="delete">
+<h4> Delete The Selected Data?</h4>
+<button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+<button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>

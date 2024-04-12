@@ -1,0 +1,90 @@
+
+
+<div  *ngIf="usedat.permission !=='superadmin'" style="text-align:center; margin-bottom: 0px; margin-top: 10%;" >
+  <h1  style="color: red;"> ACCESS DENIED </h1>
+</div>
+<div *ngIf="usedat.permission =='superadmin'">
+  <h1 style=" text-align:center;">Materials</h1>
+<!-- Button trigger modal -->
+
+<button  style="margin-left:90%;" (click)="open(add);subbtn();this.materialForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>  <table >
+  <thead>
+   <tr>
+     <th>ID</th>
+     <th >Materials</th>
+     <th >Vendors</th>
+     <th >Deduction</th>
+     <th >Buying Price Per Item</th>
+     <th>Options</th>
+
+   </tr>
+   <tr   *ngFor="let element of materialData;let i=index;" >
+       <td>{{(i+1)}}</td>
+       <td >{{element.material}}</td>
+       <td >{{element.vendor}}</td>
+       <td >{{element.deduct}}</td>
+       <td >{{element.buying}}</td>
+       <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editMaterial(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button>
+        <button  mat-icon-button   (click)="deleteMaterialData(element._id)">
+          <mat-icon>delete</mat-icon></button></td>
+  </tr>
+ </thead>
+</table>
+
+
+<ng-template #add let-modal>
+  <form class="form-horizontal" [formGroup]="materialForm" novalidate>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Details</h4>
+      <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group row">
+          <div class="col-md-6">
+            <label class="col-form-label"  > Material Name *</label>
+            <input class="form-control"   type="text" name="material" placeholder="Materials"formControlName="material" [ngClass]="{ 'is-invalid': materialFormSubmitted && n.material.errors}">
+            <div *ngIf="materialFormSubmitted && n.material.errors" class="invalid-feedback">
+             <div *ngIf="n.material.errors.required"  >Materials is required</div>
+           </div>
+          </div>
+          <div class="col-md-6" >
+            <label class="col-form-label"  > Vendor Name *</label>
+            <select class="form-control"    formControlName="vendor" [ngClass]="{ 'is-invalid': materialFormSubmitted && n.vendor.errors}" >
+              <option  [value]="null" > Select an Option</option>
+              <option    *ngFor="let element of vendorData"> {{element.VendorName}}</option>
+              </select>
+            <div *ngIf="materialFormSubmitted && n.vendor.errors" class="invalid-feedback">
+             <div *ngIf="n.vendor.errors.required"  >Vendor is required</div>
+           </div>
+          </div>
+          <div class="col-md-6" >
+            <label class="col-form-label"  > Deduction *</label>
+            <input class="form-control"   type="number" name="deduct" placeholder="deduct"formControlName="deduct" [ngClass]="{ 'is-invalid': materialFormSubmitted && n.deduct.errors}">
+            <div *ngIf="materialFormSubmitted && n.deduct.errors" class="invalid-feedback">
+             <div *ngIf="n.deduct.errors.required"  >Vendor is required</div>
+           </div>
+          </div>
+          <div class="col-md-6" >
+            <label class="col-form-label"  > Buying Price *</label>
+            <input class="form-control"   type="number" name="buying" placeholder="Buying Price"formControlName="buying" [ngClass]="{ 'is-invalid': materialFormSubmitted && n.buying.errors}">
+            <div *ngIf="materialFormSubmitted && n.buying.errors" class="invalid-feedback">
+             <div *ngIf="n.buying.errors.required"  >Buying Price is required</div>
+           </div>
+          </div>
+        </div>
+                <div class="modal-footer">
+                  <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+                  <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmitmaterialForm(modal);" >Submit</button>
+                  <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateMaterial(modal);" >Update</button>
+                </div>
+          </div>
+        </form>
+</ng-template>
+</div>
+<dialog  class=" delete"id="delete">
+<h4> Delete The Selected Data?</h4>
+<button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+<button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+

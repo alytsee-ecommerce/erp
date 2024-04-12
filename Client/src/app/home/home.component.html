@@ -1,0 +1,36 @@
+
+<div  *ngIf="usedat.permission !='superadmin'">
+  <h1 style="margin-top: 15%; text-align: center;">Welcome {{usedat.firstName}}!!!</h1>
+</div>
+
+<div *ngIf="usedat.permission =='superadmin'">
+
+
+
+<div class="row" >
+    <div class="col-6 col-sm-6"style="margin-left:15px;max-width:48%;min-height:540px;background-color:white;border:5px solid;border-color:white;text-align:center"><h1 style="margin-top: 30%;">Welcome {{usedat.userName}}!!!</h1></div>
+    <div class="col-6 col-sm-6"style="margin-left:15px;max-width:48%;min-height:540px;background-color:white;border:5px solid;border-color:white;text-align:center">
+  
+
+    <div class="input-group searchkey col-md-7"  style="margin-top:20px">
+
+  <input placeholder="From Date" style=" max-width:30% " onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+  <input placeholder="To Date" style=" max-width:30%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+  <button type="submit"  mat-raised-button color="primary"  (click)="getProfit(srt,end);">
+    <mat-icon>search</mat-icon>
+  </button>
+ <!--<h5 style="margin-left:10px"> Total No Of Working Days <mark>{{tot}}</mark></h5> --> 
+
+</div>
+        <h2 style="margin-top:50px"> Sale Credit:{{tax| number : '1.2-2'}}</h2>
+
+        <h2>Expense Debit:{{amount| number : '1.2-2'}}</h2>
+
+        <h2 style="padding:50px;border:5px solid;background:green;color:white">Total profit <mark>{{this.profit | number : '1.2-2'}}</mark></h2></div>
+  
+    <!-- Force next columns to break to new line -->
+    <div class="w-100"></div>
+  
+  
+  </div>
+</div>

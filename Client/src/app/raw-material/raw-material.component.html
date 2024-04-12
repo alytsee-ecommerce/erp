@@ -1,0 +1,473 @@
+<h3  style="text-align:center; margin-bottom: 0px;">RAW MATERIALS</h3>
+
+<div  >
+  <mat-tab-group  (selectedTabChange)="tabClick($event)" >
+    <mat-tab label=" Materials">
+      <ng-template #search1 let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title"> Search</h4>
+          <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <mat-icon>clear</mat-icon>
+          </button>
+         
+        </div>
+        <div class="modal-body">
+          
+      <div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+       
+        <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+          <select class="form-control"  [(ngModel)]="search" style=" max-width:30%;margin-left: 21%;">
+            <option value=" " >Select Supplier </option>
+            <option *ngFor="let element of vendorData" >{{element.VendorName}}</option>
+          </select>
+          <select  class="form-control"[(ngModel)]="om" >
+            <option [value]="null"  disabled>select Material</option>
+            <option *ngFor="let element of Data1" >{{element}}</option>
+          </select>
+
+          <input placeholder="From Date" style=" max-width:30%" onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+          <input placeholder="To Date" style=" max-width:30%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+          <button type="submit"   mat-raised-button color="primary" (click)="getRmData();RmData();search=null;om='';srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;paidAlltotal=0">
+            X
+        </button>
+        <button type="submit"  mat-raised-button color="primary"  (click)="searchFn(search,om,srt,end,1);">
+          <mat-icon>search</mat-icon>
+        </button>
+        </div>
+      </div>
+      <table [hidden]="usedat.permission !=='superadmin'">
+        <thead>
+        <tr>
+      <th>Paid Amount </th>
+      <th>Unpaid Amount </th>
+      <th>Total Amount</th>
+      <th>weigth</th>
+        </tr>
+        <tr>
+          <td>{{paidAlltotal |number}}</td>
+          <td>{{Alltotal |number}}</td>
+          <td>{{paidAlltotal+Alltotal |number}}</td>
+          <td *ngIf="usedat.permission =='superadmin' && Allwgt!==0">{{Allwgt}}</td>
+        </tr>
+      </thead>
+      
+      </table>
+      
+            </div>
+          </ng-template>
+          <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+           <h4 *ngIf=" usedat.permission =='superadmin' " style="margin-left:30px"> Unpaid Amount:<mark>{{Alltotal |number}}</mark></h4>
+           <button  style=" margin-left:auto" (click)="export(1,'othermaterials')" class="btn btn-success">Export Data</button> 
+          <button  style=" margin-left:5%" (click)="open(search1)" mat-raised-button color="primary">search</button> 
+          <button type="submit"   mat-raised-button color="primary" (click)="getRmData();RmData();search=null;srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;">
+            Clear
+        </button>
+
+          <button  class="btn btn-sm btn-primary " style="margin-right: 3%!important;"
+            (click)="open(add);subbtn();this.rmForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>
+          </div>
+   
+           
+      <table id="1">
+  <thead>
+      <tr>
+        <th>Sl No</th>
+        <th>Date</th>
+        <th >Sl No A</th>
+        <th >Vendor</th>
+        <th > Materials</th>
+        <th >Weight</th>
+        <th >Factory</th>
+        <th *ngIf="usedat.permission =='superadmin'">Sale</th>
+        <th *ngIf="usedat.permission =='superadmin'">Amount</th><!-- Amount / Re-check (need to conform)-->
+        <th *ngIf="usedat.permission =='superadmin'">Status</th>
+        <th >Verified</th>
+        <th>Option</th>
+      </tr>
+      <tr *ngFor="let element of rmData1;let i=index;"   [ngClass]="{
+        'positive' : element.stats =='Paid',
+        'negative' :  element.stats !=='Paid'
+     }">
+        <ng-container *ngIf="element.material !=='FireWood' && element.material !== 'SAW DUST'" >
+          <td>{{(i+1)}}</td>
+          <td >{{element.date| date : 'dd-MM-yyyy'}}</td>
+          <td >{{element.slNoA}}</td>
+          <td >{{element.suplier}}</td>
+          <td>{{element.material}}</td>
+          <td>{{element.weight}}</td>
+          <td>{{element.units}}</td>
+          <td *ngIf="usedat.permission =='superadmin'">{{element.sp}}</td>
+          
+          <td *ngIf="usedat.permission =='superadmin'">{{element.amot}}</td>
+          <td  [ngClass]="{
+            'paid' : element.stats =='Paid',
+            'unpaid' :  element.stats !=='Paid'
+         }" *ngIf="usedat.permission =='superadmin'" >{{element.stats}}</td>
+         <td *ngIf=" element.verified !==true "><mat-icon style="color:red">clear</mat-icon></td>
+         <td *ngIf="  element.verified==true" ><mat-icon style="color:green">done</mat-icon></td>
+          <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);updatebtn();editRmData(element._id);getsuplier()"> <mat-icon>edit</mat-icon></button>
+            <button  mat-icon-button   *ngIf="usedat.permission =='superadmin'" (click)="deleteRm(element._id)">
+              <mat-icon>delete</mat-icon></button></td>
+            </ng-container>
+      </tr>
+    </thead>
+  </table>
+</mat-tab>
+  <mat-tab  label="SawDust"  >
+    <ng-template #search2 let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title"> Search</h4>
+        <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+          <mat-icon>clear</mat-icon>
+        </button>
+       
+      </div>
+      <div class="modal-body">
+        
+    <div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+     
+      <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+        <select class="form-control"  [(ngModel)]="search" style=" max-width:30%;margin-left: 21%;">
+          <option value=" " >Select Supplier </option>
+          <option *ngFor="let element of vendorData" >{{element.VendorName}}</option>
+        </select>
+        <input placeholder="other Material" class="form-control" disabled [value]=sw>
+
+        <input placeholder="From Date" style=" max-width:30%" onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+        <input placeholder="To Date" style=" max-width:30%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+        <button type="submit"   mat-raised-button color="primary" (click)="getRmData();RmData();search=null;srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;">
+          X
+      </button>
+      <button type="submit"  mat-raised-button color="primary"  (click)="searchFn(search,sw,srt,end,2);">
+        <mat-icon>search</mat-icon>
+      </button>
+      </div>
+    </div>
+    <table [hidden]="usedat.permission !=='superadmin'">
+      <thead>
+      <tr>
+    <th>Paid Amount </th>
+    <th>Unpaid Amount</th>
+    <th> TOtal Amount</th>
+    <th>weigth</th>
+      </tr>
+      <tr>
+        <td>{{paidtotal |number}}</td>
+        <td>{{total|number}}</td>
+        <td>{{paidtotal+total|number}}</td>
+        <td *ngIf="usedat.permission =='superadmin' && Swgt!==0">{{Swgt}}</td>
+      </tr>
+    </thead>
+    
+    </table>
+    
+          </div>
+        </ng-template>
+        <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+          <h5  [hidden]=" usedat.permission !='superadmin' " style="margin-left:30px"> Unpaid Amount:<mark>{{total|number}}</mark></h5>
+          <button  style=" margin-left:auto" (click)="export(2,'SawDust')" class="btn btn-success">Export Data</button> 
+        <button  style=" margin-left:5%" (click)="open(search2)" mat-raised-button color="primary">search</button> 
+        <button type="submit"   mat-raised-button color="primary" (click)="getRmData();RmData();search=null;srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;">
+          Clear
+      </button>
+
+        <button  class="btn btn-sm btn-primary " style="margin-right: 3%!important;"
+          (click)="open(add);subbtn();this.rmForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>
+        </div>
+  <table id="2">
+    <thead>
+      <tr>
+        <th>Sl No</th>
+        <th>Date</th>
+        <th >Sl No A</th>
+        <th >Vendor</th>
+        <th > Lorry</th>
+        <th >Weight</th>
+        <th >Factory</th>
+        <th>Moisture</th>
+        <th>Final Weight</th>
+        <th  *ngIf="usedat.permission =='superadmin'">sale</th>
+         
+        <th *ngIf="usedat.permission =='superadmin'">Amount</th><!-- Amount / Re-check (need to conform)-->
+        <th *ngIf="usedat.permission =='superadmin'">Status</th>
+        <th >Verified</th>
+        <th>Option</th>
+      </tr>
+      
+      <tr *ngFor="let element of rmData2;let i=index;" 
+      [ngClass]="{
+        'positive' : element.stats =='Paid',
+        'negative' :  element.stats !=='Paid'
+     }" >
+        <ng-container  *ngIf="element.material=='SAW DUST'">
+          <td>{{(i+1)}}</td>
+          <td >{{element.date| date : 'dd-MM-yyyy'}}</td>
+          <td >{{element.slNoA}}</td>
+          <td >{{element.suplier}}</td>
+          <td>{{element.lorry}}</td>
+          <td>{{element.weight}}</td>
+          <td>{{element.units}}</td>
+          <td>{{element.moisture}}%</td>
+          <td>{{element.fwt}}</td>
+          <td *ngIf="usedat.permission =='superadmin'">{{element.sp}}</td>
+          
+          <td *ngIf="usedat.permission =='superadmin'">{{element.amot}}</td>
+          <td  [ngClass]="{
+            'paid' : element.stats =='Paid',
+            'unpaid' :  element.stats !=='Paid'
+         }" *ngIf="usedat.permission =='superadmin'" >{{element.stats}} </td>
+         <td *ngIf=" element.verified !==true "><mat-icon style="color:red">clear</mat-icon></td>
+         <td *ngIf="  element.verified==true" ><mat-icon style="color:green">done</mat-icon></td>
+           <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);updatebtn();editRmData(element._id);getsuplier()"> <mat-icon>edit</mat-icon></button>
+            <button  mat-icon-button  *ngIf="usedat.permission =='superadmin'"  (click)="deleteRm(element._id)">
+              <mat-icon>delete</mat-icon></button></td>
+            </ng-container>
+      </tr>
+    </thead>
+  </table>
+</mat-tab>
+  <mat-tab label="Fire Wood" > 
+    <ng-template #search3 let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title"> Search</h4>
+        <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <mat-icon>clear</mat-icon>
+        </button>
+       
+      </div>
+      <div class="modal-body">
+        
+    <div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+     
+      <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px;">
+        <select class="form-control"  [(ngModel)]="search" style=" max-width:30%;margin-left: 21%;">
+          <option value=" " >Select Supplier </option>
+          <option *ngFor="let element of vendorData" >{{element.VendorName}}</option>
+        </select>
+        <input placeholder="other Material" class="form-control" disabled [value]=fw1>
+        <input placeholder="From Date" style=" max-width:30%" onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+        <input placeholder="To Date" style=" max-width:30%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+        <button type="submit"   mat-raised-button color="primary" (click)="getRmData();RmData();search=null;srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;">
+          X
+      </button>
+      <button type="submit"  mat-raised-button color="primary"  (click)="searchFn(search,fw1,srt,end,3);">
+        <mat-icon>search</mat-icon>
+      </button>
+      </div>
+    </div>
+    <table [hidden]="usedat.permission !=='superadmin'">
+      <thead>
+      <tr>
+        <th>Paid Amount </th>
+        <th>Unpaid Amount </th>
+        <th>Total Amount</th>
+        <th>weigth</th>
+      </tr>
+      <tr>
+        <td>{{paidFtotal |number}}</td>
+        <td>{{Ftotal|number}}</td>
+        <td>{{Ftotal+paidFtotal|number}}</td>
+        <td *ngIf="usedat.permission =='superadmin' && Fwgt!==0">{{Fwgt}}</td>
+      </tr>
+    </thead>
+    
+    </table>
+    
+          </div>
+        </ng-template>
+        <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px; ">
+          <h5   [hidden]=" usedat.permission !='superadmin' "style="margin-left:30px"> Unpaid Amount:<mark>{{Ftotal |number}}</mark></h5>
+          <button  style=" margin-left:auto" (click)="export(3,'FireWood')" class="btn btn-success">Export Data</button> 
+        <button style="margin-left: 5%;" (click)="open(search3)" mat-raised-button color="primary">search</button> 
+        <button type="submit"    mat-raised-button color="primary" (click)="getRmData();RmData();RmData();search=null;srt='';end='';unpaid();getUnpaidAmount();Allwgt=0;Swgt=0;Fwgt=0;">
+          Clear
+      </button>
+        <button  class="btn btn-sm btn-primary "style="margin-right: 3%!important;"
+          (click)="open(add);subbtn();this.rmForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>
+    </div>
+  <table id="3">
+   <thead>
+    <tr>
+      <th>Sl No</th>
+      <th>Date</th>
+      <th >Sl No A</th>
+      <th >Vendor</th>
+      <th > Materials</th>
+      <th >Weight</th>
+      <th >Factory</th>
+      <th *ngIf="usedat.permission =='superadmin'" >sale</th>
+       
+      <th *ngIf="usedat.permission =='superadmin'">Amount</th><!-- Amount / Re-check (need to conform)-->
+      <th *ngIf="usedat.permission =='superadmin'">Status</th>
+      <th >Verified</th>
+      <th>Option</th>
+    </tr>
+    <tr  *ngFor="let element of rmData3;let i=index;" 
+    [ngClass]="{
+      'positive' : element.stats =='Paid',
+      'negative' :  element.stats !=='Paid'
+   }"  >
+      <ng-container *ngIf="element.material=='FireWood'" >
+        <td  >{{(i+1)}}</td>
+        <td   >{{element.date| date : 'dd-MM-yyyy'}}</td>
+        <td  >{{element.slNoA}}</td>
+        <td   >{{element.suplier}}</td>
+        <td   >{{element.material}}</td>
+        <td  >{{element.weight}}</td>
+        <td  >{{element.units}}</td>
+        <td *ngIf="usedat.permission =='superadmin'" >{{element.sp}}</td>
+        
+        <td *ngIf="usedat.permission =='superadmin'" >{{element.amot}}</td>
+        <td  [ngClass]="{
+          'paid' : element.stats =='Paid',
+          'unpaid' :  element.stats !=='Paid'
+       }"*ngIf="usedat.permission =='superadmin'" >{{element.stats}}</td>
+       <td *ngIf=" element.verified !==true"><mat-icon style="color:red">clear</mat-icon></td>
+       <td *ngIf="  element.verified==true"><mat-icon style="color:green">done</mat-icon></td>
+       
+        <td  >  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);updatebtn();editRmData(element._id);getsuplier()"> <mat-icon>edit</mat-icon></button>
+          <button  mat-icon-button  *ngIf="usedat.permission =='superadmin'"  (click)="deleteRm(element._id)">
+            <mat-icon>delete</mat-icon></button></td>
+    </ng-container>
+    </tr>
+  </thead>
+</table>
+</mat-tab>
+ 
+</mat-tab-group>
+
+
+
+<ng-template #add let-modal>
+  <form class="form-horizontal" [formGroup]="rmForm" novalidate>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Details <h5 style="color:red" *ngIf="errmsg!=''">{{errmsg}}</h5></h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');this.errmsg=''">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <div class="modal-body">
+
+
+        <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" > Material Name *</label>
+            <select class="form-control"   (change)="getsuplier()"  [(ngModel)]="mat"  formControlName="material" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.material.errors}">
+              <option  [value]="null" disabled="true" > Select an Option</option>
+              <option   *ngFor="let element of Data1  "> {{element}}</option>
+              </select>
+            <div *ngIf="rmFormSubmitted && n.material.errors" class="invalid-feedback">
+             <div *ngIf="n.material.errors.required"  >Material is required</div>
+           </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" > Select Supplier*</label>
+            <select   for="suplier" class="form-control"    [(ngModel)]="suply"  formControlName="suplier"   (ngModelChange)="getamt();"  [ngClass]="{ 'is-invalid': rmFormSubmitted && n.suplier.errors}">
+              <option [value]="null" [disabled]="true" > Select an Option</option>
+              <option   value="{{element.vendor}}" *ngFor="let element of matData" > {{element.vendor}}</option>
+              </select>
+            <div *ngIf="rmFormSubmitted && n.suplier.errors" class="invalid-feedback">
+             <div *ngIf="n.suplier.errors.required"  >suplier is required</div>
+           </div>
+           </div>
+
+          <div class="col-md-4">
+            <label class="col-form-label" > Weight *</label>
+            <input class="form-control " [(ngModel)]="wgt" type="number"  name="weight"    (ngModelChange)="getamt();getmoist();getamt()"   placeholder="Weight"formControlName="weight" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.weight.errors}">
+            <div *ngIf="rmFormSubmitted && n.weight.errors" class="invalid-feedback">
+              <div *ngIf="n.weight.errors.required">weight is required</div>
+            </div>
+          </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-4">
+              <label class="col-form-label" > Factory</label>
+              <select id="units"  class="form-select" name="units"formControlName="units" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.units.errors}">
+                <option [value]="null" [disabled]="true">Select Factory</option>
+                  <option value="90MM">90MM</option>
+                  <option value="65MM">65MM</option>
+                </select>
+                <div *ngIf="rmFormSubmitted && n.units.errors" class="invalid-feedback">
+                  <div *ngIf="n.units.errors.required">unit is required</div>
+                </div>
+              </div>
+              <div class="col-md-4" *ngIf="saw">
+                <label class="col-form-label" > Enter Moisture*</label>
+                <input class="form-control"   [(ngModel)]="moist"formControlName="moisture"  type="text"   name="moisture" placeholder="Enter Moisture" (ngModelChange)="getmoist()" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.moisture.errors}">
+                <div *ngIf="rmFormSubmitted && n.moisture.errors" class="invalid-feedback">
+                  <div *ngIf="n.moisture.errors.required">moisture is required</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="col-form-label" *ngIf="usedat.permission =='superadmin'" > Buying Price *</label>
+                <input class="form-control"  [hidden]="usedat.permission !=='superadmin'"  [readonly]="true"   style="  min-width: 40px;" type="number"   [(ngModel)]="buy" placeholder="Buying Price " formControlName="sp">
+              </div>
+
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-4">
+                  <label class="col-form-label"  [hidden]="usedat.permission !=='superadmin'">  Amount*</label>
+                  <input    [hidden]="usedat.permission !=='superadmin'" [readonly]="true" class="form-control"     [(ngModel)]="amt"  name="dispAmt"  placeholder=" Amount" formControlName="amot" >
+                </div>
+
+                  <div class="col-md-4">
+                    <label class="col-form-label" > Date *</label>
+                    <input class="form-control"  style="  min-width: 40px;" type="date" name="date" placeholder="Date" formControlName="date" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.date.errors}">
+                    <div *ngIf="rmFormSubmitted && n.date.errors" class="invalid-feedback">
+                     <div *ngIf="n.date.errors.required">Date is required</div>
+                   </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="col-form-label" >Enter Sl No A  *</label>
+                    <input class="form-control"   type="text" name="sl No A" placeholder="Enter Sl No A"  formControlName="slNoA" [ngClass]="{ 'is-invalid': rmFormSubmitted && n.slNoA.errors }">
+                    <div *ngIf="rmFormSubmitted && n.slNoA.errors" class="invalid-feedback">
+                      <div *ngIf="n.slNoA.errors.required">Sl No is required</div>
+                    </div>
+                  </div>
+                  </div>
+                  
+              <div class="form-group row">
+                <div class="col-md-4">
+                  <label class="col-form-label" [hidden]="usedat.permission !=='superadmin'" > Status*</label>
+                  <select id="stats" [hidden]="usedat.permission !=='superadmin'"  [ngModel]="default"  class="form-select" formControlName="stats">
+                   
+                    <option [selected]="true" value="Unpaid" >Unpaid</option>
+                    <option value="Paid"> Paid</option>
+                  </select>
+                </div>
+                  <div class="col-md-4" *ngIf="saw">
+                    <label class="col-form-label">  Final Weight*</label>
+                    <input      [readonly]="true" class="form-control"     [(ngModel)]="fw"  placeholder=" Final Weight" formControlName="fwt" >
+                  </div>
+                  <div class="col-md-4" *ngIf="saw">
+                    <label class="col-form-label">  Lorry</label>
+                    <input     class="form-control"      placeholder=" Lorry" formControlName="lorry" >
+                  </div>
+                  <div class="col-md-4" >
+                    <label class="col-form-label" *ngIf="usedat.permission=='admin' || usedat.permission=='superadmin'">  VERIFIED</label>
+                    <input type="checkbox"   *ngIf="usedat.permission=='admin' || usedat.permission=='superadmin'" formControlName="verified">
+                  </div>
+                  <div class="col-md-4"  *ngIf="update" >
+                    <label class="col-form-label" *ngIf="usedat.permission=='superadmin'">  Time</label>
+                    <input type="text" [attr.disabled]="true"   name="time"  placeholder="Time" *ngIf=" usedat.permission=='superadmin'" formControlName="editedTime" >
+                  </div>
+                </div>
+  
+                
+        <div class="modal-footer">
+          <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');rmForm.reset();initialiseForm();this.errmsg=''">Cancel</button>
+          <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmitrmForm(modal);" >Submit</button>
+          <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateRm(modal);" >Update</button>
+        </div>
+        </div>
+        </form>
+      </ng-template>
+  
+
+    </div>
+  <dialog  class=" delete"id="delete">
+  <h4> Delete The Selected Data?</h4>
+  <button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+  <button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+

@@ -1,0 +1,123 @@
+<div  *ngIf="usedat.permission =='user' || usedat.permission ==null " style="text-align:center; margin-bottom: 0px; margin-top: 10%;" >
+  <h1  style="color: red;"> ACCESS DENIED </h1>
+</div>
+<div *ngIf="usedat.permission =='superadmin'|| usedat.permission =='admin'">
+<h1 style="margin-top: 10px;  text-align:center;">SALARY ADVANCE</h1>
+<!-- Button trigger modal -->
+<ng-template #search let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title"></h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <mat-icon>clear</mat-icon>
+    </button>
+   
+  </div>
+  <div class="modal-body">
+    
+<div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+ 
+
+<select class="form-control" [(ngModel)]="empN" >
+  <option value='' disabled>select Employee</option>
+  <option   *ngFor="let element of userData">{{element.firstName}}</option>
+  
+</select>
+  <input placeholder="From Date"style="max-width:30%" onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+
+  <input placeholder="To Date"  style="max-width:30%" onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+    <button type="submit" mat-raised-button color="primary" (click)="getSalaryData();srt='';end=''; empN='';Alltotal=0;">
+      X
+  </button>
+  <button type="submit"  mat-raised-button color="primary"  (click)="searchFn(empN,srt,end)">
+    <mat-icon>search</mat-icon>
+  </button>
+  
+
+</div>
+
+
+      </div>
+    </ng-template>
+    <div class="input-group searchkey col-md-7" style="margin-top: 10px; margin-bottom: 10px; ">
+      <h5  *ngIf="Alltotal!=0" [hidden]=" usedat.permission !='superadmin' "style="margin-left:30px">  Salary Advance:<mark>{{Alltotal |number}}</mark></h5>
+          <button  style=" margin-left:auto" (click)="open(search)" mat-raised-button color="primary">search</button> 
+          <button type="submit" mat-raised-button color="primary" (click)="getSalaryData();srt='';end='';Alltotal=0">
+            Clear
+        </button>
+<button  style="margin-right:3%;" (click)="open(add);subbtn();this.salaryForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button></div> <table ><thead>
+   <tr>
+     <th>Sl No</th>
+     <th >EMPLOYEE NAME</th>
+     <th > Date</th>
+     <th >Amount</th>
+     <th [hidden] ="usedat.permission !=='superadmin'">OPtions</th>
+   </tr>
+   <tr *ngFor="let element of salaryData;let i=index;" >
+       <td>{{(i+1)}}</td>
+       <td >{{element.empName}}</td>
+       <td >{{element.date| date : 'dd-MM-yyyy'}}</td>
+       <td >{{element.amount}}</td>
+       <td  [hidden] ="usedat.permission !=='superadmin'">  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editSalary(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button>
+        <button  mat-icon-button   (click)="deleteSalary(element._id)">
+          <mat-icon>delete</mat-icon></button></td>
+  </tr>
+ </thead>
+</table>
+
+
+  
+<ng-template #add let-modal>
+  <form class="form-horizontal" [formGroup]="salaryForm" novalidate>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Details</h4>
+      <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" > Employee Name*</label>
+            <select class="form-control" style="  min-width: 40px;" 
+            formControlName="empName" [ngClass]="{ 'is-invalid': salaryFormSubmitted && n.empName.errors}">
+            <option  [value]="null" [disabled]="true">select Employee</option>
+            <option *ngFor="let element of userData">{{element.firstName}}</option>
+
+            <div *ngIf="salaryFormSubmitted && n.empName.errors" class="invalid-feedback">
+             <div *ngIf="n.empName.errors.required">empName is required</div>
+           </div>
+           </select>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >Date *</label>
+            <input class="form-control" type="date" name="date"placeholder="date"  formControlName="date" [ngClass]="{ 'is-invalid': salaryFormSubmitted && n.date.errors}">
+            <div *ngIf="salaryFormSubmitted && n.date.errors" class="invalid-feedback">
+             <div *ngIf="n.date.errors.required">Date is required</div>
+           </div>
+          </div>
+          <div class="col-md-4">
+            <label class="col-form-label" >Amount*</label>
+            <input class="form-control" type="number" name="amount"placeholder="amount"  formControlName="amount" [ngClass]="{ 'is-invalid': salaryFormSubmitted && n.amount.errors}">
+            <div *ngIf="salaryFormSubmitted && n.amount.errors" class="invalid-feedback">
+             <div *ngIf="n.amount.errors.required">amount is required</div>
+           </div>
+   
+
+
+                  
+          <div class="modal-footer">
+            <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+            <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmitsalaryForm(modal);" >Submit</button>
+            <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateSalary(modal);" >Update</button>
+          </div>
+          </div>
+          </div>
+          </div>
+        </form>
+        </ng-template>
+      </div>
+<dialog  class=" delete"id="delete">
+<h4> Delete The Selected Data?</h4>
+<button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+<button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+

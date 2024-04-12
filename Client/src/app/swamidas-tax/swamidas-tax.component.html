@@ -1,0 +1,118 @@
+
+ <div  *ngIf="usedat.permission =='user' || usedat.permission ==null " style="text-align:center; margin-bottom: 0px; margin-top: 10%;" >
+  <h1  style="color: red;"> ACCESS DENIED </h1>
+</div>
+<div *ngIf="usedat.permission =='superadmin'|| usedat.permission =='admin'">  
+<h1 style=" text-align:center;margin-bottom: 0px;"> TAX</h1>
+<!-- Button trigger modal -->
+<mat-tab-group style="margin-top:0px"  >
+  <mat-tab  label=" Tax">
+   
+
+<div class="input-group searchkey col-md-7"  style="margin-top:20px;padding-left:30px ;">
+<input placeholder="From Date" style=" max-width:10% " onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+<input placeholder="To Date" style=" max-width:10%"  onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+<button type="submit"  mat-raised-button color="primary"  (click)="searchFn(srt,end)"><mat-icon>search</mat-icon></button>
+
+<button (click)="open(add);subbtn();this.taxForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button>
+</div>
+
+
+
+<table >
+  <thead>
+   <tr>
+  
+      <th>Sales Tax (CR)</th>
+      <th>Raw Material Tax (DB)</th>
+      <th>Vehicle Tax</th>
+      <th>Other Taxable Expense</th>
+      <th>Net Payable Tax</th>
+   </tr>
+   <tr>
+      
+       <td>{{tax}}</td>
+       <td>{{rawmatTax}}</td>
+       <td>{{vechTax}}</td>
+       <td>{{otherTax}}</td>
+       <td>{{totTax}}</td>
+    
+  </tr>
+ </thead>
+</table>
+
+
+<ng-template #add let-modal>
+  <form class="form-horizontal" [formGroup]="taxForm" novalidate>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Details</h4>
+      <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" > Month N Year *</label>
+            <input class="form-control" style="  min-width: 40px;" type="date" name="MonthNyear" placeholder="Month N year"formControlName="MonthNyear" [ngClass]="{ 'is-invalid': taxFormSubmitted && n.MonthNyear.errors}">
+            <div *ngIf="taxFormSubmitted && n.MonthNyear.errors" class="invalid-feedback">
+             <div *ngIf="n.MonthNyear.errors.required">Month N year is required</div>
+           </div>
+          </div>
+            <div class="col-md-4">
+              <label class="col-form-label" >Raw Material Tax *</label>
+              <input    type="text"  class="form-control" name="amount"   placeholder="amount"formControlName="amount" [ngClass]="{ 'is-invalid': taxFormSubmitted && n.amount.errors}">
+              <div *ngIf="taxFormSubmitted && n.amount.errors" class="invalid-feedback">
+                <div *ngIf="n.amount.errors.required">Raw Material Tax is required</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="col-form-label" >BIll NO *</label>
+              <input    type="text"  class="form-control"    formControlName="vet" [ngClass]="{ 'is-invalid': taxFormSubmitted && n.vet.errors}">
+              <div *ngIf="taxFormSubmitted && n.vet.errors" class="invalid-feedback">
+                <div *ngIf="n.vet.errors.required">Bill NO  is required</div>
+              </div>
+            </div>
+            </div>
+
+                <div class="modal-footer">
+                  <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+                  <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmittaxForm(modal);" >Submit</button>
+                  <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateSwamidas(modal);" >Update</button>
+                </div>
+          </div>
+        </form>
+</ng-template>
+<dialog  class=" delete"id="delete">
+<h4> Delete The Selected Data?</h4>
+<button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+<button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+</dialog>
+</mat-tab>
+<mat-tab label="Rawmaterial-Tax" >
+  <table>
+  <thead>
+    <tr>
+      <th>Sno</th>
+      <th>Rawmaterial Tax</th>
+      <th>Bill No</th>
+      <th > date</th>
+      <th>Options</th>
+    </tr>
+    <tr *ngFor="let element of swamidasData;let i=index;" >
+        <td>{{(i+1)}}</td>
+        <td >{{element.amount}}</td>
+        <td>{{element.vet}}</td>
+        <td >{{element.MonthNyear}}</td>
+        <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editSwamidas(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button>
+         <button  mat-icon-button   (click)="deleteSwamidasData(element._id)">
+           <mat-icon>delete</mat-icon></button></td>
+   </tr>
+  </thead>
+ </table>
+
+</mat-tab>
+</mat-tab-group>
+</div>
+
+

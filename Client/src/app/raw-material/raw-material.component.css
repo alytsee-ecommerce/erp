@@ -1,0 +1,82 @@
+
+  table, td, th {
+    border: 1px solid;
+  }
+
+  
+table {
+    
+    margin-bottom: 5px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-color: #ddd;
+    
+  }
+  
+  mark{
+    background-color:#fce8e9;
+  
+
+    }
+
+  .positive {
+    background-color: #defae3;
+}
+
+.negative {
+    background-color:#fce8e9;
+}
+.paid {
+  color: green;
+  font-weight:bolder;
+}
+
+.unpaid {
+  color:red;
+  font-weight: bolder;
+}
+  th {
+    text-align: left;
+    border-bottom: 2px solid ;
+    border-color: rgb(221, 221, 221);
+    background-color: #a3ade6;
+    border-top: 0;
+    position: sticky;
+    top: 0;
+ 
+    
+  }
+  
+  td {
+    border-top: 1px solid ;
+    border-color: #ddd;
+  }
+  
+  tr:hover {background-color: #ddd;}
+  td, th {
+    padding: 8px;
+  }
+ .update{
+    border-color: #fff;
+    background-color:#fff ;
+    border-radius: 1px;
+    width:50%;
+    align-items: center;
+  }
+  .delete{
+    max-width:60%;
+    border-color: #FFF;
+  }
+  .example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .example-full-width {
+    width: 50%;
+  }
+

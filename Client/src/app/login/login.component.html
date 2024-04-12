@@ -1,0 +1,22 @@
+
+<div class="wrapper fadeInDown">
+ 
+    <div id="formContent">
+      
+      <h2 class="active"> LogIn </h2>
+      
+      <form class="form-horizontal"  novalidate>
+        <div [formGroup]="loginForm">
+        <input class="form-control" class="fadeIn second "  type="text" placeholder="User Name" formControlName="username" [ngClass]="{ 'is-invalid': loginFormSubmitted && n.username.errors}">
+        <div *ngIf="loginFormSubmitted && n.username.errors" class="invalid-feedback">
+         <div *ngIf="n.username.errors.required">username is required</div>
+       </div> <input class="form-control"class="fadeIn third"  type="password" placeholder="password" formControlName="password" [ngClass]="{ 'is-invalid': loginFormSubmitted && n.password.errors}">
+       <div *ngIf="loginFormSubmitted && n.password.errors" class="invalid-feedback">
+        <div *ngIf="n.password.errors.required">password is required</div>
+      </div>
+      <h2 *ngIf="usedat==null"  style="color:red"> {{er}}</h2>
+        <input type="submit" class="fadeIn fourth" (click)="login()">
+      </div>
+      </form>
+    </div>
+  </div>

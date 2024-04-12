@@ -1,0 +1,105 @@
+<div class="container-main" >
+  
+    <mat-toolbar   style="width:auto;background-color:  #2c3ea3;" *ngIf="showHead "  class="example-viewport">
+        <mat-toolbar-row  >
+          <span style="color:#fff" >ERP Application</span>
+          <mat-icon class="icon"  [matMenuTriggerFor]="notification"*ngIf="notify">warning</mat-icon>
+          <span></span>
+          <span   style="margin-left:100px">
+          <button mat-button  class="nav-link" routerLink="/home"  routerLinkActive="active">Home</button>
+        </span>
+       
+          <button mat-button  class="nav-link"  routerLink="/users" routerLinkActive="active">Users</button>
+       
+       
+          <button mat-button  class="nav-link" routerLink="/raw-material" routerLinkActive="active">Raw Materials</button>
+         
+         
+          <button mat-button  class="nav-link" routerLink="/sales" routerLinkActive="active">Sales</button>
+         
+         
+          <button mat-button  [matMenuTriggerFor]="menu6"   class="nav-link"  routerLinkActive="active">Cash Book<mat-icon>keyboard_arrow_down</mat-icon>
+            <mat-menu   #menu6="matMenu" >
+              <button  style="color: #2c3ea3;margin-right: 5px;margin-left: 5px;"mat-button class="nav-li" routerLink="/cash-book" routerLinkActive="active">Office Cash Book</button>
+              <button  style="color: #2c3ea3;margin-left: 5px;"mat-button  class="nav-li" routerLink="/MainCash-book" routerLinkActive="active">Main Cash-Book </button>
+            </mat-menu>
+          </button>
+         
+         
+
+          <button mat-button [matMenuTriggerFor]="menu5"   class="nav-link" routerLinkActive="active">Attendance<mat-icon>keyboard_arrow_down</mat-icon>
+            <mat-menu   #menu5="matMenu" >
+              <button  style="color: #2c3ea3;margin-right: 5px;margin-left: 5px;"mat-button class="nav-li" routerLink="/attendance" routerLinkActive="active">Attendance Sheet</button>
+              <button  style="color: #2c3ea3;margin-left: 5px;"mat-button  class="nav-li" routerLink="/salary-advance" routerLinkActive="active">Salary Advance </button>
+            </mat-menu>
+            
+          </button>
+         
+         
+         
+         
+                  <button mat-button [matMenuTriggerFor]="menu1"   class="nav-link"routerLinkActive="active">Expense<mat-icon>keyboard_arrow_down</mat-icon>
+            <mat-menu   #menu1="matMenu">
+              <button style="color: #2c3ea3;" mat-button  class="nav-li" routerLink="/diesel" routerLinkActive="active">Diesel Expense</button>
+              <button style="color: #2c3ea3;" mat-button class="nav-li" routerLink="/vehicle-expense" routerLinkActive="active">Vehicle Expense</button>
+              <button style="color: #2c3ea3;" mat-button class="nav-li" routerLink="/other-expense" routerLinkActive="active">Other Expense</button>
+            </mat-menu>
+          </button>
+         
+         
+          <button mat-button class="nav-link" routerLink="/machine-parts-change" routerLinkActive="active">MPC</button>
+          
+
+         
+          <button mat-button class="nav-link" routerLink="/tax" routerLinkActive="active"> Tax</button>
+
+          <button mat-button [matMenuTriggerFor]="menu"   class="nav-link" routerLinkActive="active">Masters<mat-icon>keyboard_arrow_down</mat-icon>
+          <mat-menu   #menu="matMenu" >
+            <button  style="color: #2c3ea3;"mat-button class="nav-li" routerLink="/vendor" routerLinkActive="active">Vendors</button>
+            <button  style="color: #2c3ea3;"  mat-button class="nav-li" routerLink="/material" routerLinkActive="active" > Materials</button>
+          </mat-menu>
+          
+        </button>
+       
+      
+        <img   *ngIf="useda.permission=='user'||useda.permission=='admin'" [matMenuTriggerFor]="log" class="images" src="../assets/users.png"/>
+        <img   *ngIf="useda.permission=='superadmin'" [matMenuTriggerFor]="log" class="images" src="../assets/admin.png"/>
+        <h6 style="margin-left: 5px;">{{useda.userName}}</h6>
+
+       <mat-menu #notification >
+     
+       <p  style="margin: 10px;max-width:auto" *ngFor="let element of partName"> change  <mark style="color:red"> {{element}}</mark></p>
+      
+
+       </mat-menu>
+
+
+        <mat-menu   #log="matMenu" >
+          <button mat-button   style="margin-bottom:0px ;color: red;"  (click)="logout()"> logout  <mat-icon style="font-size: 1.3em ;" (click)="logout()">logout</mat-icon ></button>
+         
+        </mat-menu>
+        
+        
+       
+          
+
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-drawer-container class="container">
+      <div >
+        <router-outlet></router-outlet>
+      </div>
+     </mat-drawer-container>
+
+<footer layout="row" class="md-padding" *ngIf="showHead"></footer>
+</div>
+
+
+<!--
+<li class="nav-item">
+  <button mat-button class="nav-link"  [matMenuTriggerFor]="menu">Master</button>
+ 
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>-->

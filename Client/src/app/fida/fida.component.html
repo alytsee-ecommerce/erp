@@ -1,0 +1,219 @@
+<h1 style="margin-top: 10px;  text-align:center;">Diesel Expense</h1>
+<ng-template #search let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title"></h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <mat-icon>clear</mat-icon>
+    </button>
+   
+  </div>
+
+  <div class="modal-body">
+  
+<div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+ 
+
+<select class="form-control"  [(ngModel)]="lory">
+  <option value="null" disabled>select Lorry</option>
+  <option   *ngFor="let element of data2">{{element}}</option>
+  
+</select>
+  <input placeholder="From Date"style="max-width:30%" onfocus="(this.type='date')" type="text" class="form-control" onblur="(this.type='text')"  [(ngModel)]="srt"  >
+
+  <input placeholder="To Date"  style="max-width:30%" onfocus="(this.type='date')" type="text"class="form-control"  onblur="(this.type='text')"  [(ngModel)]="end"  >
+    <button type="submit" mat-raised-button color="primary" (click)="getFidaData();srt='';end=''; Alltotal=0;">
+      X
+  </button>
+  <button type="submit"  mat-raised-button color="primary"  (click)="searchFn(lory,srt,end)">
+    <mat-icon>search</mat-icon>
+  </button>
+  
+
+</div>
+<table [hidden]="usedat.permission !=='superadmin'">
+  <thead>
+  <tr>
+<th> Total  Amount </th>
+  </tr>
+  <tr>
+    <td>{{Alltotal}}</td>
+  </tr>
+</thead>
+
+</table>
+
+      </div>
+    </ng-template>
+    <div class="input-group searchkey col-md-7" style=" margin-bottom: 10px;">
+      <h5  *ngIf="total!=0" [hidden]=" usedat.permission !='superadmin' "style="margin-left:30px">  Unpaid:<mark>{{total |number}}</mark></h5>
+    <button  style=" margin-left:auto" (click)="open(search)" mat-raised-button color="primary">search</button> 
+    <button type="submit" mat-raised-button color="primary" (click)="getFidaData();srt='';end='';total=0">
+      Clear
+  </button>
+    <button  style=" margin-right: 3%;" (click)="open(add);subbtn();this.fidaForm.reset();" mat-raised-button color="primary"><mat-icon style="padding-right: 10px;" >add_circle </mat-icon>Add</button> 
+  </div>
+    <table >
+ <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th >Lorry</th>
+        <th >Invoice</th>
+        <th >Token No</th>
+        <th>DC NO</th>
+        <th  [hidden]="usedat.permission !=='superadmin'">Amount</th>    
+        <th>Trip</th> 
+        <th >Fida bill</th>
+        <th  [hidden]="usedat.permission !=='superadmin'">Status</th>
+        <th >options</th>
+      </tr>
+      <tr *ngFor="let element of fidaData;let i=index;"  [ngClass]="{
+        'positive' : element.stats =='Paid',
+        'Neutral' : element.stats =='NA',
+        'negative' :  element.stats =='Unpaid'
+     }">
+          <td>{{(i+1)}}</td>
+          <td>{{element.date | date : 'dd-MM-yyyy'}}</td>
+          <td>{{element.lorry}}</td>
+          <td >{{element.invoice}}</td>
+          <td >{{element.token}}</td>
+          <td >{{element.dcno}}</td>
+          <td  [hidden]="usedat.permission !=='superadmin'">{{element.amount}}</td>
+          <td>{{element.trip}}</td>
+          <td>{{element.fidabill}}</td>
+          <td  [hidden]="usedat.permission !=='superadmin'" [ngClass]="{
+            'paid' : element.stats =='Paid' , 
+            'NA' : element.stats =='NA ',
+            'unpaid' :  element.stats =='Unpaid'
+         }">{{element.stats}}</td>
+          <td>  <button   mat-icon-button style="margin-right: 10px;backface-visibility: hidden;"  (click)="open(add);editFida(element._id);updatebtn()"> <mat-icon>edit</mat-icon></button>
+            <button  mat-icon-button   *ngIf="usedat.permission =='superadmin'" (click)="deleteFida(element._id)">
+              <mat-icon>delete</mat-icon></button></td>
+      </tr>
+    </thead>
+  </table>
+  
+  
+  
+
+   
+<ng-template #add let-modal>
+  <form class="form-horizontal" [formGroup]="fidaForm" novalidate>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Details</h4>
+    <button type="button"  style="border:0px;background-color: #fff;" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <mat-icon>clear</mat-icon>
+    </button>
+   
+  </div>
+  <div class="modal-body">
+    <div class="form-group row">
+      <div class="col-md-4">
+        <label class="col-form-label" >Lorry *</label>
+        <select class="form-control" type="text"   name="lorry"placeholder="lorry" formControlName="lorry" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.lorry.errors}">
+          <option  [value]="null" [disabled]="true" > Select an Option</option>
+         
+          <option   *ngFor="let element of data2">{{element}}</option>
+       
+          </select>
+          <div *ngIf="fidaFormSubmitted && n.lorry.errors" class="invalid-feedback">
+            <div *ngIf="n.lorry.errors.required">lorry  is required</div>
+            </div>
+          </div>
+        <div class="col-md-4">
+          <label class="col-form-label" >invoice *</label>
+       <input class="form-control" type="text" name="invoice" placeholder="invoice"
+       formControlName="invoice" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.invoice.errors}">
+         <div *ngIf="fidaFormSubmitted && n.invoice.errors" class="invalid-feedback">
+          <div *ngIf="n.invoice.errors.required">invoice is required</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="col-form-label" > Token No *</label>
+         <input class="form-control" type="text"  name="token" placeholder="Token No"
+         formControlName="token" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.token.errors}">
+           <div *ngIf="fidaFormSubmitted && n.token.errors" class="invalid-feedback">
+            <div *ngIf="n.token.errors.required">Token no is required</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+        <div class="col-md-4">
+          <label class="col-form-label" >DC No *</label>
+        <input class="form-control" type="text"  name="dcno" placeholder="DC No"
+        formControlName="dcno" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.dcno.errors}">
+          <div *ngIf="fidaFormSubmitted && n.dcno.errors" class="invalid-feedback">
+           <div *ngIf="n.dcno.errors.required">DC no is required</div>
+           </div>
+        </div>
+        <div class="col-md-4">
+          <label class="col-form-label" >Date *</label>
+     <input class="form-control" type="date"   name="date"placeholder="Date"
+     formControlName="date" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.date.errors}">
+       <div *ngIf="fidaFormSubmitted && n.date.errors" class="invalid-feedback">
+        <div *ngIf="n.date.errors.required">date  is required</div>
+        </div>
+        </div>
+        <div class="col-md-4">
+            <label class="col-form-label" >Amount *</label>
+       <input class="form-control" type="number"  name="amount"  placeholder="Amount"
+       formControlName="amount" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.amount.errors}">
+         <div *ngIf="fidaFormSubmitted && n.amount.errors" class="invalid-feedback">
+          <div *ngIf="n.amount.errors.required">Amount  is required</div>
+          </div> 
+          </div>
+        <div class="form-group row">
+          <div class="col-md-4">
+            <label class="col-form-label" >Trip </label>
+            <select class="form-control" (change)="stat()" [(ngModel)]="trp"  name="trip"placeholder="Trip" formControlName="trip" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.trip.errors}">
+              <option  [value]="null" [disabled]="true" > Select an Option</option>
+              <option value="NA">NA</option>
+              <option value="I">I</option>
+              <option value="II">II</option>
+              <option value="III">III</option>
+              <option value="IV">IV</option>    
+              <option value="V">V</option>      
+              </select>
+              <div *ngIf="fidaFormSubmitted && n.trip.errors" class="invalid-feedback">
+                <div *ngIf="n.trip.errors.required">Trip  is required</div>
+                </div>
+             </div>
+
+            <div class="col-md-4">
+              <label class="col-form-label" >fida bill </label>
+              <input class="form-control" type="text"   name="remarks"placeholder="fida bill"
+              formControlName="fidabill" [ngClass]="{ 'is-invalid': fidaFormSubmitted && n.fidabill.errors}">
+              <div *ngIf="fidaFormSubmitted && n.fidabill.errors" class="invalid-feedback">
+                <div *ngIf="n.fidabill.errors.required">Trip  is required</div>
+                </div>
+              
+      </div>
+      <div class="col-md-4">
+        <label class="col-form-label"   > Status*</label>
+        <select id="stats"  [(ngModel)]="statusval"  [hidden]="usedat.permission !=='superadmin'"  class="form-select" formControlName="stats" >
+          <option value="NA" > NA</option>
+          <option value="Paid"  >Paid</option>
+          <option  value="Unpaid" > Unpaid</option>
+          
+        </select>
+
+      </div>
+</div>
+</div>
+
+  <div class="modal-footer">
+    <button  mat-raised-button   style="background-color:#d1dfd4fb;margin-right: 10px;"  (click)="modal.dismiss('Cross click');initialiseForm()">Cancel</button>
+    <button  *ngIf="sub"  mat-raised-button color="primary"  type="submit" (click)="saveOrSubmitfidaForm(modal);" >Submit</button>
+    <button  *ngIf="update"  mat-raised-button color="primary"  type="submit" (click)="updateFida(modal);" >Update</button>
+  </div>
+  </div>
+</form>
+</ng-template>
+  
+
+    
+  <dialog  class=" delete"id="delete">
+  <h4> Delete The Selected Data?</h4>
+  <button  mat-raised-button color="warn"  onclick="window.delete.close();" style="margin-right: 10px;">Yes</button>
+  <button  mat-raised-button color="primary" onclick="window.delete.close();">Cancel</button>
+  
