@@ -18,7 +18,7 @@ var userLogin=''
 
      userData =await log
     
-   let result=await  authUser(log)
+   let result=await  authUser(res,log)
  res.json(userLogin)
  }
  catch(err){
